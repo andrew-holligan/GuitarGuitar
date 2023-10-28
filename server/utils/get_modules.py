@@ -24,3 +24,13 @@ def get_customers_values_by_field(customers, field):
         values.append(customer[field])
 
     return values
+
+
+def filter_customers_by_field(customers, field, value):
+    c = []
+
+    for customer in customers:
+        if customer[field] == value:
+            c.append(customer)
+
+    return c

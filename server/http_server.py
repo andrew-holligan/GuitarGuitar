@@ -32,7 +32,9 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
 
         # generate and store token
         token = generate_token()
-        self.tokens[email] = token
+        # we know email is a unique field
+        customer_id = filter_customers_by_field(customers, "email", email)[0]
+        self.tokens[customer_id] = token
 
         response = {"success": True, "token": token}
         self.wfile.write(json.dumps(response).encode())
