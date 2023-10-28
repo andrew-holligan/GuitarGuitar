@@ -3,10 +3,13 @@ import requests
 import json
 
 from utils.get_modules import *
+from utils.token import *
 from guitarguitar_endpoints import *
 
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
+    tokens = {}
+
     def handle_GET_login(self, arguments):
         # arguments format:
         #       arguments = {
@@ -17,7 +20,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         email = arguments["email"]
 
         customers = get_customers()
-        customers_emails = get_customers_value_by_field(customers, "email")
+        customers_emails = get_customers_values_by_field(customers, "email")
 
         if email not in customers_emails:
             response = {
@@ -25,11 +28,14 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
                 "errorMessage": "Account with that email does not exist",
             }
             self.wfile.write(json.dumps(response).encode())
-        else:
-            response = {
-                "success": True,
-            }
-            self.wfile.write(json.dumps(response).encode())
+            return
+
+        # generate and store token
+        token = generate_token()
+        self.tokens[email] = token
+
+        response = {"success": True, "token": token}
+        self.wfile.write(json.dumps(response).encode())
 
     def handle_GET_orders(arguments):
         pass

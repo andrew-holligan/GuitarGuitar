@@ -17,7 +17,7 @@ def parse_query_string(query):
     return args
 
 
-def get_customers_value_by_field(customers, field):
+def get_customers_values_by_field(customers, field):
     values = []
 
     for customer in customers:
