@@ -15,3 +15,12 @@ def parse_query_string(query):
         args[field] = value
 
     return args
+
+
+def get_customers_value_by_field(customers, field):
+    values = []
+
+    for customer in customers:
+        values.append(customer[field])
+
+    return values
