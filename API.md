@@ -15,3 +15,6 @@
   - Description: Logout user
   - Parameters:
     - token: string
+    - customer_id: string
+  - response:
+    - { success: boolean, errorMessage?: string }

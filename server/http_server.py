@@ -41,10 +41,17 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
 
         print(self.tokens)
 
-    def handle_GET_orders(arguments):
+    def handle_GET_logout(self, arguments):
         pass
 
-    GET_endpoints = {"/login": handle_GET_login, "/orders": handle_GET_orders}
+    def handle_GET_orders(self, arguments):
+        pass
+
+    GET_endpoints = {
+        "/login": handle_GET_login,
+        "/logout": handle_GET_logout,
+        "/orders": handle_GET_orders,
+    }
 
     def do_GET(self):
         # Send a response header
