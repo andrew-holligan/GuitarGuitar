@@ -57,6 +57,12 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode())
             return
 
+        # delete token
+        del self.tokens[customer_id]
+
+        response = {"success": True}
+        self.wfile.write(json.dumps(response).encode())
+
     def handle_GET_orders(self, arguments):
         pass
 
