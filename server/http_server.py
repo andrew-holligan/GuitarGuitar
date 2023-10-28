@@ -33,11 +33,13 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         # generate and store token
         token = generate_token()
         # we know email is a unique field
-        customer_id = filter_customers_by_field(customers, "email", email)[0]
-        self.tokens[customer_id] = token
+        customer = filter_customers_by_field(customers, "email", email)[0]
+        self.tokens[customer["Id"]] = token
 
-        response = {"success": True, "token": token}
+        response = {"success": True, "token": token, "customer_id": customer["Id"]}
         self.wfile.write(json.dumps(response).encode())
+
+        print(self.tokens)
 
     def handle_GET_orders(arguments):
         pass

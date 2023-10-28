@@ -11,7 +11,7 @@
   - response:
     - { success: boolean, token:string, errorMessage?: string }
 
-- GET /orders
-  - Description: Display users orders
+- GET /logout
+  - Description: Logout user
   - Parameters:
-    -
+    - token: string
