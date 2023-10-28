@@ -36,13 +36,26 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         customer = filter_customers_by_field(customers, "email", email)[0]
         self.tokens[customer["Id"]] = token
 
-        response = {"success": True, "token": token, "customer_id": customer["Id"]}
+        response = {"success": True, "token": token, "customerId": customer["Id"]}
         self.wfile.write(json.dumps(response).encode())
 
-        print(self.tokens)
-
     def handle_GET_logout(self, arguments):
-        pass
+        # arguments format:
+        #       arguments = {
+        #           "token",
+        #           "customerId"
+        #       }
+
+        token = arguments["token"]
+        customer_id = arguments["customerId"]
+
+        if token != self.tokens[customer_id]:
+            response = {
+                "success": False,
+                "errorMessage": "You are unauthorised",
+            }
+            self.wfile.write(json.dumps(response).encode())
+            return
 
     def handle_GET_orders(self, arguments):
         pass
