@@ -1,6 +1,9 @@
-import requests
+import socketserver
 
-url = "https://www.guitarguitar.co.uk/hackathon/customers/"
-r = requests.get(url=url)
-response = r.json()
-print(response)
+from http_server import RequestHandler
+
+HOST = "localhost"
+PORT = 8080
+
+httpd = socketserver.TCPServer((HOST, PORT), RequestHandler)
+httpd.serve_forever()
