@@ -1,10 +1,9 @@
 import http.server
-import requests
 import json
 
-from utils.get_modules import *
-from utils.token import *
-from guitarguitar_endpoints import *
+from server.utils.get_modules import *
+from server.utils.token import *
+from server.endpoints.guitarguitar_endpoints import *
 
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
