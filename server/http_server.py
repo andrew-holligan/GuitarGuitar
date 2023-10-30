@@ -15,7 +15,10 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         #           "password"
         #       }
 
-        if not check_arguments(self, arguments, "email", "password"):
+        arguments, successful_parse = parse_arguments(
+            self, arguments, ("email", str), ("password", str)
+        )
+        if not successful_parse:
             return
 
         email = arguments["email"]
@@ -50,7 +53,10 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         #           "customerId"
         #       }
 
-        if not check_arguments(self, arguments, "token", "customerId"):
+        arguments, successful_parse = parse_arguments(
+            self, arguments, ("token", str), ("customerId", int)
+        )
+        if not successful_parse:
             return
 
         token = arguments["token"]
