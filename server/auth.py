@@ -1,8 +1,20 @@
 import random
+import http.server
+import json
 
 
 class Auth:
     tokens = {}
+
+    def is_authorised(server: http.server.BaseHTTPRequestHandler, token, customer_id):
+        if token != Auth.get_token(customer_id):
+            response = {
+                "success": False,
+                "errorMessage": "You are unauthorised",
+            }
+            server.wfile.write(json.dumps(response).encode())
+            return False
+        return True
 
     def create_token(customer_id):
         # generate and store token

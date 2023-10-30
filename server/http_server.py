@@ -2,7 +2,7 @@ import http.server
 import json
 
 from utils.get_modules import *
-from utils.auth import *
+from auth import *
 from endpoints.guitarguitar_endpoints import *
 
 
@@ -49,12 +49,8 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         token = arguments["token"]
         customer_id = int(arguments["customerId"])
 
-        if token != Auth.get_token(customer_id):
-            response = {
-                "success": False,
-                "errorMessage": "You are unauthorised",
-            }
-            self.wfile.write(json.dumps(response).encode())
+        # check token authorisation
+        if not Auth.is_authorised(self, token, customer_id):
             return
 
         # delete token
@@ -66,10 +62,14 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
     def handle_GET_orders(self, arguments):
         pass
 
+    def handle_GET_customer(self, arguments):
+        pass
+
     GET_endpoints = {
         "/login": handle_GET_login,
         "/logout": handle_GET_logout,
         "/orders": handle_GET_orders,
+        "/customer": handle_GET_customer,
     }
 
     def do_GET(self):

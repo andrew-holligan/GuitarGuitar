@@ -12,9 +12,18 @@
     - { success: boolean, token:string, errorMessage?: string }
 
 - GET /logout
+
   - Description: Logout user
   - Parameters:
     - token: string
     - customerId: string
   - response:
     - { success: boolean, errorMessage?: string }
+
+- GET /customer
+  - Description
+  - Parameters:
+    - token: string
+    - customerId: string
+  - response:
+    - ALL CUSTOMER DATA: dictionary
