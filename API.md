@@ -26,4 +26,4 @@
     - token: string
     - customerId: string
   - response:
-    - { success: boolean, customer: Customer, errorMessage?: string }
+    - { success: boolean, customer?: Customer, errorMessage?: string }

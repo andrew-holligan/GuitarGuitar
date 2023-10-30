@@ -98,8 +98,9 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         customers = get_customers()
         customer = filter_customers_by_field(customers, "Id", customer_id)[0]
 
-        # send response
-        self.wfile.write(json.dumps(customer).encode())
+        response = {"success": True, "customer": customer}
+
+        self.wfile.write(json.dumps(response).encode())
 
     GET_endpoints = {
         "/login": handle_GET_login,
