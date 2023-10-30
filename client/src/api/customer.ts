@@ -20,29 +20,45 @@ export interface Address {
   country: string;
 }
 
+export interface CustomerSuccessResponse {
+  success: true;
+  customer: Customer;
+}
+
+export interface CustomerFailResponse {
+  success: false;
+  errorMessage: string;
+}
+
 let customerCached: Customer | null = null;
 
-export default async function getCustomer(forceFetch = false) {
+export default async function getCustomer(
+  forceFetch = false
+): Promise<CustomerSuccessResponse | CustomerFailResponse> {
   const auth = useAuth();
   if (!auth) {
     customerCached = null;
-    return null;
+    return {
+      success: false,
+      errorMessage: "Not logged in.",
+    };
   }
 
-  if (customerCached && !forceFetch) {
-    return customerCached;
+  if (customerCached && !forceFetch && auth.customerId == customerCached.Id) {
+    return { success: true, customer: customerCached };
   }
 
   try {
     const res = await fetch(
-      `http://localhost:8080/customer?customerId=${auth.customerId}&token=${auth.customerId}`
+      `http://localhost:8080/customer?customerId=${auth.customerId}&token=${auth.token}`
     );
 
-    const data: Customer = await res.json();
-    customerCached = data;
-
+    const data: CustomerSuccessResponse | CustomerFailResponse = await res.json();
     return data;
   } catch (error) {
-    return null;
+    return {
+      success: false,
+      errorMessage: "Failed to fetch customer data.",
+    };
   }
 }

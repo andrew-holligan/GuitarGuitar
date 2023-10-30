@@ -19,7 +19,7 @@ function Home() {
     <>
       <main className="bg-dark-800 w-full h-full p-6 md:p-10 grid grid-rows-[auto_1fr]">
         <header className="flex justify-between gap-8 items-center">
-          <Profile className="max-w-md w-full h-24" />
+          <Profile className="max-w-md w-full h-28" />
 
           <LogoutButton className="w-28 h-14" />
         </header>
