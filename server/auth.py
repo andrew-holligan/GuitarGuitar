@@ -26,7 +26,7 @@ class Auth:
         del Auth.tokens[customer_id]
 
     def get_token(customer_id):
-        return Auth.tokens[customer_id]
+        return Auth.tokens.get(customer_id, "")
 
     def get_all_tokens():
         return Auth.tokens

@@ -2,6 +2,7 @@ import http.server
 import json
 
 from utils.get_modules import *
+from utils.valid_arguments import *
 from auth import *
 from endpoints.guitarguitar_endpoints import *
 
@@ -13,6 +14,9 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         #           "email",
         #           "password"
         #       }
+
+        if not check_arguments(self, arguments, "email", "password"):
+            return
 
         email = arguments["email"]
 
@@ -45,6 +49,9 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         #           "token",
         #           "customerId"
         #       }
+
+        if not check_arguments(self, arguments, "token", "customerId"):
+            return
 
         token = arguments["token"]
         customer_id = int(arguments["customerId"])

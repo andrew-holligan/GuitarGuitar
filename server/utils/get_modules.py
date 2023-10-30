@@ -1,4 +1,7 @@
 def parse_path_string(path):
+    if "?" not in path:
+        return path, ""
+
     p = path.split("?")
     endpoint = p[0]
     query = p[1]
@@ -6,9 +9,11 @@ def parse_path_string(path):
 
 
 def parse_query_string(query):
-    query_list = query.split("&")
     args = {}
+    if "=" not in query:
+        return args
 
+    query_list = query.split("&")
     for arg in query_list:
         field = arg.split("=")[0]
         value = arg.split("=")[1]
