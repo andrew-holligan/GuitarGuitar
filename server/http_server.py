@@ -76,7 +76,30 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         pass
 
     def handle_GET_customer(self, arguments):
-        pass
+        # arguments format:
+        #       arguments = {
+        #           "token",
+        #           "customerId"
+        #       }
+
+        arguments, successful_parse = parse_arguments(
+            self, arguments, ("token", str), ("customerId", int)
+        )
+        if not successful_parse:
+            return
+
+        token = arguments["token"]
+        customer_id = arguments["customerId"]
+
+        # check token authorisation
+        if not Auth.is_authorised(self, token, customer_id):
+            return
+
+        customers = get_customers()
+        customer = filter_customers_by_field(customers, "Id", customer_id)[0]
+
+        # send response
+        self.wfile.write(json.dumps(customer).encode())
 
     GET_endpoints = {
         "/login": handle_GET_login,
