@@ -1,4 +1,4 @@
-import { useState, FormEventHandler } from "react";
+import { useState, useEffect, FormEventHandler } from "react";
 import Logo from "../components/app/Logo";
 import Button from "../components/shared/Button";
 import InputPassword from "../components/shared/InputPassword";
@@ -7,8 +7,12 @@ import Label from "../components/shared/Label";
 import useInput from "../hooks/useInput";
 import { login } from "../api/auth";
 import FormMessage from "../components/shared/FormMessage";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Login() {
+  const navigate = useNavigate();
+
   const { value: email, bind: bindEmail, reset: resetEmail } = useInput("");
   const { value: password, bind: bindPassword, reset: resetPassword } = useInput("");
 
@@ -23,10 +27,20 @@ function Login() {
     const res = await login(email, password);
     if (!res.success) {
       setFormMessage({ message: res.errorMessage, purpose: "error" });
-    } else {
-      setFormMessage({ message: "Successfully logged in.", purpose: "success" });
+      return;
     }
+
+    setFormMessage({ message: "Successfully logged in.", purpose: "success" });
+    navigate("/");
   };
+
+  // if logged in already, redirect to home
+  useEffect(() => {
+    const auth = useAuth();
+    if (auth) {
+      navigate("/");
+    }
+  });
 
   return (
     <main className="bg-dark-800 w-full h-full flex flex-col justify-center items-center">
