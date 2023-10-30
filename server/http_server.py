@@ -60,7 +60,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             return
 
         token = arguments["token"]
-        customer_id = int(arguments["customerId"])
+        customer_id = arguments["customerId"]
 
         # check token authorisation
         if not Auth.is_authorised(self, token, customer_id):
