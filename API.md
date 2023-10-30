@@ -26,4 +26,4 @@
     - token: string
     - customerId: string
   - response:
-    - ALL CUSTOMER DATA: dictionary
+    - { success: boolean, customer: Customer, errorMessage?: string }
