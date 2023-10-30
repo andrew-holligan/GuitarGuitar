@@ -2,13 +2,11 @@ import http.server
 import json
 
 from utils.get_modules import *
-from utils.token import *
+from utils.auth import *
 from endpoints.guitarguitar_endpoints import *
 
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
-    tokens = {}
-
     def handle_GET_login(self, arguments):
         # arguments format:
         #       arguments = {
@@ -29,13 +27,16 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode())
             return
 
-        # generate and store token
-        token = generate_token()
         # we know email is a unique field
         customer = filter_customers_by_field(customers, "email", email)[0]
-        self.tokens[customer["Id"]] = token
+        # generate and store token
+        Auth.create_token(customer["Id"])
 
-        response = {"success": True, "token": token, "customerId": customer["Id"]}
+        response = {
+            "success": True,
+            "token": Auth.get_token(customer["Id"]),
+            "customerId": customer["Id"],
+        }
         self.wfile.write(json.dumps(response).encode())
 
     def handle_GET_logout(self, arguments):
@@ -46,9 +47,9 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         #       }
 
         token = arguments["token"]
-        customer_id = arguments["customerId"]
+        customer_id = int(arguments["customerId"])
 
-        if token != self.tokens[customer_id]:
+        if token != Auth.get_token(customer_id):
             response = {
                 "success": False,
                 "errorMessage": "You are unauthorised",
@@ -57,7 +58,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             return
 
         # delete token
-        del self.tokens[customer_id]
+        Auth.delete_token(customer_id)
 
         response = {"success": True}
         self.wfile.write(json.dumps(response).encode())
