@@ -2,8 +2,8 @@
 
 ## Contributors
 
-Frontend\t:\tfreddie-nelson [profile](https://github.com/freddie-nelson)
-Backend\t:\tandrew-holligan [profile](https://github.com/andrew-holligan)
+Frontend : freddie-nelson [profile](https://github.com/freddie-nelson)  
+Backend : andrew-holligan [profile](https://github.com/andrew-holligan)
 
 ## Description
 
