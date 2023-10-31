@@ -10,25 +10,32 @@ function Avatar(props: AllHTMLAttributes<HTMLDivElement>) {
     customerAsync.execute();
   }, []);
 
-  return (
-    <div {...props}>
-      {customerAsync.isLoading && (
-        <div className="animate-pulse bg-gray-300 rounded-full w-full h-full"></div>
-      )}
+  let content = <></>;
 
-      {!customerAsync.isLoading && (customerAsync.error || !customerAsync.data) && (
-        <FormMessage className="w-full h-full" purpose="error">
-          Failed to load avatar.
-        </FormMessage>
-      )}
-
-      {customerAsync.data && (
+  if (customerAsync.isLoading) {
+    content = <div className="animate-pulse bg-accent-900 rounded-lg w-full h-full"></div>;
+  } else if (customerAsync.error || !customerAsync.data?.success) {
+    content = (
+      <FormMessage className="w-full h-full rounded-lg" purpose="error">
+        Failed to load avatar.
+      </FormMessage>
+    );
+  } else if (customerAsync.data && customerAsync.data.success) {
+    content = (
+      <>
+        <div className="bg-accent-900 w-full h-full absolute top-0 left-0 rounded-lg"></div>
         <img
-          className="w-full h-full"
-          src={customerAsync.data.avatar}
-          alt={`${customerAsync.data.first_name}'s avatar`}
+          className="w-full h-full absolute top-0 left-0 rounded-lg"
+          src={customerAsync.data.customer.avatar}
+          alt={`${customerAsync.data.customer.first_name}'s avatar`}
         />
-      )}
+      </>
+    );
+  }
+
+  return (
+    <div {...props} className={`relative ${props.className}`}>
+      {content}
     </div>
   );
 }
