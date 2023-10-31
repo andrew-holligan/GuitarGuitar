@@ -21,7 +21,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         if not successful_parse:
             return
 
-        customers = get_customers()
+        customers = GGEndpoints.get_customers()
         customers_emails = get_customers_values_by_field(customers, "email")
 
         # email validation
@@ -88,7 +88,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         if not Auth.is_authorised(self, arguments["token"], arguments["customerId"]):
             return
 
-        customers = get_customers()
+        customers = GGEndpoints.get_customers()
         # we know customerId is a unique field hence [0] (it will only return single customer)
         customer = filter_customers_by_field(customers, "Id", arguments["customerId"])[
             0

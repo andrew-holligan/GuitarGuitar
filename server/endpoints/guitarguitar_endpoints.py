@@ -1,47 +1,40 @@
 import requests
 
-customers = None
-orders = None
-products = None
 
+class GGEndpoints:
+    customers = None
+    orders = None
+    products = None
 
-def get_customers(force_fetch=False):
-    global customers
+    def get_customers(force_fetch=False):
+        if GGEndpoints.customers and not force_fetch:
+            return GGEndpoints.customers
 
-    if customers and not force_fetch:
-        return customers
+        # Prepare a custom response
+        url = "https://www.guitarguitar.co.uk/hackathon/customers/"
+        r = requests.get(url=url)
+        GGEndpoints.customers = r.json()
 
-    # Prepare a custom response
-    url = "https://www.guitarguitar.co.uk/hackathon/customers/"
-    r = requests.get(url=url)
-    customers = r.json()
+        return GGEndpoints.customers
 
-    return customers
+    def get_orders(force_fetch=False):
+        if GGEndpoints.orders and not force_fetch:
+            return GGEndpoints.orders
 
+        # Prepare a custom response
+        url = "https://www.guitarguitar.co.uk/hackathon/orders/"
+        r = requests.get(url=url)
+        GGEndpoints.orders = r.json()
 
-def get_orders(force_fetch=False):
-    global orders
+        return GGEndpoints.orders
 
-    if orders and not force_fetch:
-        return orders
+    def get_products(force_fetch=False):
+        if GGEndpoints.products and not force_fetch:
+            return GGEndpoints.products
 
-    # Prepare a custom response
-    url = "https://www.guitarguitar.co.uk/hackathon/orders/"
-    r = requests.get(url=url)
-    orders = r.json()
+        # Prepare a custom response
+        url = "https://www.guitarguitar.co.uk/hackathon/products/"
+        r = requests.get(url=url)
+        GGEndpoints.products = r.json()
 
-    return orders
-
-
-def get_products(force_fetch=False):
-    global products
-
-    if products and not force_fetch:
-        return products
-
-    # Prepare a custom response
-    url = "https://www.guitarguitar.co.uk/hackathon/products/"
-    r = requests.get(url=url)
-    products = r.json()
-
-    return products
+        return GGEndpoints.products
