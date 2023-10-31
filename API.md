@@ -8,22 +8,33 @@
   - Parameters:
     - email: string
     - password: string
-  - response:
-    - { success: boolean, token:string, errorMessage?: string }
+  - Response:
+    - { success: boolean, token?:string, errorMessage?: string }
 
 - GET /logout
 
   - Description: Logout user
   - Parameters:
     - token: string
-    - customerId: string
-  - response:
+    - customerId: integer
+  - Response:
     - { success: boolean, errorMessage?: string }
 
 - GET /customer
-  - Description
+
+  - Description: Get customer info
   - Parameters:
     - token: string
-    - customerId: string
-  - response:
+    - customerId: integer
+  - Response:
     - { success: boolean, customer?: Customer, errorMessage?: string }
+
+- GET /orders
+
+  - Description: Get customer orders
+  - Parameters:
+    - token: string
+    - customerId: integer
+    - fieldToSortBy: string
+  - Response:
+    - { success: boolean, orders?: Orders, errorMessage?: string }
