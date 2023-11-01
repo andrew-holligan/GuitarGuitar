@@ -1,6 +1,6 @@
 import socketserver
 
-from http_server import RequestHandler
+from endpoints.server import RequestHandler
 
 HOST = "localhost"
 PORT = 8080

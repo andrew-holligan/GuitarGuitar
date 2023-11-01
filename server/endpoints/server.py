@@ -3,8 +3,8 @@ import json
 
 from utils.get_modules import *
 from utils.valid_arguments import *
-from auth import *
-from endpoints.guitarguitar_endpoints import *
+from authorisation.auth import *
+from endpoints.gg_endpoints import *
 
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
@@ -69,7 +69,24 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(response).encode())
 
     def handle_GET_orders(self, arguments):
-        pass
+        # arguments = {
+        #   "token" : string
+        #   "customerId" : integer
+        #   "fieldToSortBy" : string
+        # }
+
+        # arguments parse and validation
+        arguments, successful_parse = parse_arguments(
+            self, arguments, ("token", str), ("customerId", int), ("fieldToSortBy", str)
+        )
+        if not successful_parse:
+            return
+
+        # check token authorisation
+        if not Auth.is_authorised(self, arguments["token"], arguments["customerId"]):
+            return
+
+        all_orders = GGEndpoints.get_orders()
 
     def handle_GET_customer(self, arguments):
         # arguments = {
