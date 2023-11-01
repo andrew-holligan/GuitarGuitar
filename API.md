@@ -35,6 +35,7 @@
   - Parameters:
     - token: string
     - customerId: integer
-    - fieldToSortBy: string
+    - fieldToSortBy: string ("DateCreated"/"OrderTotal")
+    - directionOfSort: string ("Ascending"/"Descending")
   - Response:
     - { success: boolean, orders?: Orders, errorMessage?: string }
