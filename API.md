@@ -34,9 +34,18 @@
   - Description: Get customer orders
   - Parameters:
     - token: string
-    - customerId: integer
+    - CustomerId: integer
     - sortField: string ("DateCreated"/"OrderTotal")
     - sortDirection: string ("asc"/"desc")
-    - filterOrderStatus: integer
+    - filterOrderStatus: integer (0-6 inclusive)
   - Response:
     - { success: boolean, orders?: Orders, errorMessage?: string }
+
+- GET /products/recommended
+
+  - Description: Get recommended products
+  - Parameters:
+    - token: string
+    - customerId: integer
+  - Response:
+    - { success: boolean, products?: Products, errorMessage?: string }
