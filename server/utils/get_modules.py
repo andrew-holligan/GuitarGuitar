@@ -10,32 +10,30 @@ def parse_path_string(path):
 
 def parse_query_string(query):
     args = {}
-    if "=" not in query:
+    try:
+        query_list = query.split("&")
+        for arg in query_list:
+            field = arg.split("=")[0]
+            value = arg.split("=")[1]
+            args[field] = value
+    finally:
         return args
 
-    query_list = query.split("&")
-    for arg in query_list:
-        field = arg.split("=")[0]
-        value = arg.split("=")[1]
-        args[field] = value
 
-    return args
-
-
-def get_customers_values_by_field(customers, field):
+def get_values_by_field(arrOfD, field):
     values = []
 
-    for customer in customers:
-        values.append(customer[field])
+    for d in arrOfD:
+        values.append(d[field])
 
     return values
 
 
-def filter_customers_by_field(customers, field, value):
-    c = []
+def filter_by_field(arrOfD, field, value):
+    arr = []
 
-    for customer in customers:
-        if customer[field] == value:
-            c.append(customer)
+    for d in arrOfD:
+        if d[field] == value:
+            arr.append(d)
 
-    return c
+    return arr

@@ -2,6 +2,7 @@ import http.server
 import json
 
 from utils.get_modules import *
+from utils.orders_modules import *
 from utils.valid_arguments import *
 from authorisation.auth import *
 from endpoints.gg_endpoints import *
@@ -10,8 +11,8 @@ from endpoints.gg_endpoints import *
 class RequestHandler(http.server.BaseHTTPRequestHandler):
     def handle_GET_login(self, arguments):
         # arguments = {
-        #   "email": string
-        #   "password" : string
+        #   "email"     :   string
+        #   "password"  :   string
         #  }
 
         # arguments parse and validation
@@ -22,7 +23,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             return
 
         customers = GGEndpoints.get_customers()
-        customers_emails = get_customers_values_by_field(customers, "email")
+        customers_emails = get_values_by_field(customers, "email")
 
         # email validation
         if arguments["email"] not in customers_emails:
@@ -34,7 +35,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
             return
 
         # we know email is a unique field hence [0] (it will only return single customer)
-        customer = filter_customers_by_field(customers, "email", arguments["email"])[0]
+        customer = filter_by_field(customers, "email", arguments["email"])[0]
         # generate and store token
         Auth.create_token(customer["Id"])
 
@@ -47,8 +48,8 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
 
     def handle_GET_logout(self, arguments):
         # arguments = {
-        #   "token" : string
-        #   "customerId" : integer
+        #   "token"       :   string
+        #   "customerId"  :   integer
         # }
 
         # arguments parse and validation
@@ -68,30 +69,10 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         response = {"success": True}
         self.wfile.write(json.dumps(response).encode())
 
-    def handle_GET_orders(self, arguments):
-        # arguments = {
-        #   "token" : string
-        #   "customerId" : integer
-        #   "fieldToSortBy" : string
-        # }
-
-        # arguments parse and validation
-        arguments, successful_parse = parse_arguments(
-            self, arguments, ("token", str), ("customerId", int), ("fieldToSortBy", str)
-        )
-        if not successful_parse:
-            return
-
-        # check token authorisation
-        if not Auth.is_authorised(self, arguments["token"], arguments["customerId"]):
-            return
-
-        all_orders = GGEndpoints.get_orders()
-
     def handle_GET_customer(self, arguments):
         # arguments = {
-        #   "token" : string
-        #   "customerId" : integer
+        #   "token"       :   string
+        #   "customerId"  :   integer
         # }
 
         # arguments parse and validation
@@ -107,18 +88,68 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
 
         customers = GGEndpoints.get_customers()
         # we know customerId is a unique field hence [0] (it will only return single customer)
-        customer = filter_customers_by_field(customers, "Id", arguments["customerId"])[
-            0
-        ]
+        customer = filter_by_field(customers, "Id", arguments["customerId"])[0]
 
         response = {"success": True, "customer": customer}
+        self.wfile.write(json.dumps(response).encode())
+
+    def handle_GET_orders(self, arguments):
+        # arguments = {
+        #   "token"             :   string
+        #   "customerId"        :   integer
+        #   "sortField"     :   string
+        #   "sortDirection"   :   string
+        #   "filterOrderStatus" :   integer
+        # }
+
+        # arguments parse and validation
+        arguments, successful_parse = parse_arguments(
+            self,
+            arguments,
+            ("token", str),
+            ("CustomerId", int),
+            ("sortField", str),
+            ("sortDirection", str),
+            ("filterOrderStatus", int),
+        )
+        if not successful_parse:
+            return
+
+        # arguments values validation
+        successful_values = validate_arguments_values(
+            self,
+            arguments,
+            ("sortField", ["DateCreated", "OrderTotal"]),
+            ("sortDirection", ["asc", "desc"]),
+            ("filterOrderStatus", [0, 1, 2, 3, 4, 5, 6]),
+        )
+        if not successful_values:
+            return
+
+        # check token authorisation
+        if not Auth.is_authorised(self, arguments["token"], arguments["CustomerId"]):
+            return
+
+        # get customer orders, filter and sort them
+        all_orders = GGEndpoints.get_orders()
+        customer_orders = filter_by_field(
+            all_orders, "CustomerId", arguments["CustomerId"]
+        )
+        filtered_customer_orders = filter_orders_by_OrderStatus(
+            customer_orders, arguments["filterOrderStatus"]
+        )
+        sorted_customer_orders = sort_orders(
+            filtered_customer_orders, arguments["sortField"], arguments["sortDirection"]
+        )
+
+        response = {"success": True, "orders": sorted_customer_orders}
         self.wfile.write(json.dumps(response).encode())
 
     GET_endpoints = {
         "/login": handle_GET_login,
         "/logout": handle_GET_logout,
-        "/orders": handle_GET_orders,
         "/customer": handle_GET_customer,
+        "/orders": handle_GET_orders,
     }
 
     def do_GET(self):
@@ -132,4 +163,5 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         endpoint, query = parse_path_string(self.path)
         arguments = parse_query_string(query)
 
+        # call endpoint handler
         self.GET_endpoints[endpoint](self, arguments)

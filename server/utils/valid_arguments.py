@@ -24,3 +24,17 @@ def parse_arguments(
         parsed_args[valid_arg] = parsed_value
 
     return parsed_args, True
+
+
+def validate_arguments_values(
+    server: http.server.BaseHTTPRequestHandler, arguments, *field_valid_values
+):
+    for field, valid_values in field_valid_values:
+        if arguments[field] not in valid_values:
+            response = {
+                "success": False,
+                "errorMessage": "Invalid argument value (specifically " + field + ")",
+            }
+            server.wfile.write(json.dumps(response).encode())
+            return False
+    return True
