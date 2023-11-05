@@ -145,11 +145,34 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         response = {"success": True, "orders": sorted_customer_orders}
         self.wfile.write(json.dumps(response).encode())
 
+    def handle_GET_products_recommended(self, arguments):
+        # arguments = {
+        #   "token"             :   string
+        #   "customerId"        :   integer
+        # }
+
+        # arguments parse and validation
+        arguments, successful_parse = parse_arguments(
+            self,
+            arguments,
+            ("token", str),
+            ("CustomerId", int),
+        )
+        if not successful_parse:
+            return
+
+        # check token authorisation
+        if not Auth.is_authorised(self, arguments["token"], arguments["CustomerId"]):
+            return
+
+        all_products = GGEndpoints.get_products()
+
     GET_endpoints = {
         "/login": handle_GET_login,
         "/logout": handle_GET_logout,
         "/customer": handle_GET_customer,
         "/orders": handle_GET_orders,
+        "/products/recommended": handle_GET_products_recommended,
     }
 
     def do_GET(self):
