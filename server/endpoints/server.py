@@ -165,7 +165,19 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
         if not Auth.is_authorised(self, arguments["token"], arguments["CustomerId"]):
             return
 
-        all_products = GGEndpoints.get_products()
+        # get customers orders
+        all_orders = GGEndpoints.get_orders()
+        customer_orders = filter_by_field(
+            all_orders, "CustomerId", arguments["CustomerId"]
+        )
+        # filter to just products
+        customer_orders_products = get_values_by_field(customer_orders, "Products")
+        customer_orders_products = sum(customer_orders_products, [])
+
+        # get the product categories for product in their orders
+        customer_orders_products_categories = get_values_by_field(
+            customer_orders_products, "Category"
+        )
 
     GET_endpoints = {
         "/login": handle_GET_login,
